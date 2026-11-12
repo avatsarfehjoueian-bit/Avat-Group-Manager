@@ -46,9 +46,8 @@ async def protect_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     text = message.text or message.caption or ""
-    entities = message.entities or []
-    entities += message.caption_entities or []
-
+    entities = list(message.entities or []) + list(message.caption_entities or [])
+    entities += list(message.caption_entities or [])
     has_link = (
         bool(re.search(r"https?://|www\.|t\.me/", text, re.I))
         or any(e.type in ("url", "text_link") for e in entities)
