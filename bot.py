@@ -1,7 +1,7 @@
 
 import os
 import re
-from datetime import time
+from datetime import time, datetime
 from zoneinfo import ZoneInfo
 
 from telegram import Update, ChatPermissions
@@ -15,7 +15,7 @@ from telegram.ext import (
 
 TOKEN = os.environ["BOT_TOKEN"]
 TZ = ZoneInfo("Europe/Copenhagen")
-
+last_message_time = {}
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "سلام! من Avat Group Manager هستم. برای مدیریت گروه آماده‌ام."
@@ -44,7 +44,24 @@ async def protect_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if await is_admin(update, context):
         return
-
+    if (
+    message.photo
+    or message.video
+    or message.video_note
+    or message.voice
+    or message.audio
+    or message.document
+    or message.sticker
+    or message.animation
+):
+            await message.delete()
+            await message.chat.send_message(
+                f"⚠️ {message.from_user.first_name} ارسال ویدیو و پیام صوتی مجاز نیست."
+            )
+            return
+    if not message.text:
+        await message.delete()
+        return
     text = message.text or message.caption or ""
     entities = list(message.entities or []) + list(message.caption_entities or [])
     entities += list(message.caption_entities or [])
@@ -61,7 +78,15 @@ async def protect_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         except Exception:
             pass
+    user_id = message.from_user.id
+    now = datetime.now().timestamp()
+    last = last_message_time.get(user_id, 0)
 
+    if now - last < 20:
+        await message.delete()
+        return
+
+    last_message_time[user_id] = now
 async def quiet_start(context: ContextTypes.DEFAULT_TYPE):
     chat_id = context.job.chat_id
     await context.bot.set_chat_permissions(
