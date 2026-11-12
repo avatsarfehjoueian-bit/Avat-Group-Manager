@@ -91,7 +91,18 @@ async def quiet_start(context: ContextTypes.DEFAULT_TYPE):
     chat_id = context.job.chat_id
     await context.bot.set_chat_permissions(
         chat_id,
-        ChatPermissions(can_send_messages=False)
+        ChatPermissions(
+    can_send_messages=False,
+    can_send_audios=False,
+    can_send_documents=False,
+    can_send_photos=False,
+    can_send_videos=False,
+    can_send_video_notes=False,
+    can_send_voice_notes=False,
+    can_send_polls=False,
+    can_send_other_messages=False,
+    can_add_web_page_previews=False
+)
     )
 
 async def quiet_end(context: ContextTypes.DEFAULT_TYPE):
