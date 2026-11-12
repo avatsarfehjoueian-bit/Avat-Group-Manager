@@ -186,7 +186,7 @@ def main():
     )
     app.add_handler(
         MessageHandler(
-            (filters.TEXT | filters.CAPTION) & ~filters.COMMAND,
+            (filters.ALL) & ~filters.COMMAND,
             protect_group
         )
     )
