@@ -151,10 +151,10 @@ async def settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
     now_local = datetime.now(TZ).time()
 
     if now_local >= time(23, 0) or now_local < time(7, 0):
-    await context.bot.set_chat_permissions(
-    chat_id,
-    ChatPermissions(can_send_messages=False)
-            )
+        await context.bot.set_chat_permissions(
+        chat_id,
+        ChatPermissions(can_send_messages=False)
+                )
     await update.message.reply_text(
         "✅ تنظیمات فعال شد.\n"
         "🌙 سکوت گروه: 23:00 تا 07:00\n"
